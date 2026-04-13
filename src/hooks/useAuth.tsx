@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, Session } from "@supabase/supabase-js";
+import { User, Session, AuthError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Profile {
@@ -24,6 +24,8 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  resendConfirmation: (email: string) => Promise<{ error: Error | null }>;
+  isEmailNotConfirmedError: (error: any) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,6 +75,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Função para verificar se o erro é de e-mail não confirmado
+  const isEmailNotConfirmedError = (error: any): boolean => {
+    if (!error) return false;
+    
+    const errorMessage = error.message?.toLowerCase() || "";
+    return errorMessage.includes("email not confirmed") || 
+           errorMessage.includes("verify your email") ||
+           errorMessage.includes("email não confirmado");
+  };
+
+  // Função para reenviar e-mail de confirmação
+  const resendConfirmation = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/?confirmed=true`
+        }
+      });
+      
+      if (error) throw error;
+      return { error: null };
+    } catch (error) {
+      console.error("Error resending confirmation:", error);
+      return { error: error as Error };
+    }
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
@@ -80,6 +111,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(currentSession?.user ?? null);
 
         if (currentSession?.user) {
+          // Verificar se o e-mail está confirmado
+          const isEmailConfirmed = currentSession.user.email_confirmed_at;
+          
+          if (!isEmailConfirmed) {
+            console.log("Email não confirmado ainda");
+          }
+          
           setTimeout(() => {
             fetchProfile(currentSession.user.id);
           }, 0);
@@ -107,27 +145,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: `${window.location.origin}/?confirmed=true`,
         },
-        emailRedirectTo: window.location.origin,
-      },
-    });
+      });
 
-    return { error };
+      return { error };
+    } catch (error) {
+      console.error("Error in signUp:", error);
+      return { error: error as Error };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    return { error };
+      // Se houver erro, verificar se é de e-mail não confirmado
+      if (error) {
+        console.error("Sign in error:", error);
+      }
+
+      return { error };
+    } catch (error) {
+      console.error("Error in signIn:", error);
+      return { error: error as Error };
+    }
   };
 
   const signOut = async () => {
@@ -150,6 +203,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signIn,
         signOut,
         refreshProfile,
+        resendConfirmation,
+        isEmailNotConfirmedError,
       }}
     >
       {children}

@@ -1,10 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Search, Clock, CheckCircle, ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import Header from "@/components/Header";
+// Importe o supabase corretamente - COMENTE ou REMOVA se não tiver configurado ainda
+import { supabase } from "@/lib/supabase";
 
 const Landing = () => {
+  const [searchParams] = useSearchParams();
+  
+  // Estado para confirmação de e-mail
+  const [confirmationStatus, setConfirmationStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [confirmationMessage, setConfirmationMessage] = useState('');
+
   // Lista atualizada com as imagens fornecidas
   const backgroundImages = [
     '/NEXT FUT.JPG',
@@ -19,6 +27,30 @@ const Landing = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [loadedImages, setLoadedImages] = useState<string[]>([]);
+
+  // Lógica de confirmação de e-mail - VERSÃO SIMPLIFICADA (sem Supabase)
+  useEffect(() => {
+    const confirmEmail = async () => {
+      const confirmed = searchParams.get('confirmed');
+      
+      // Se já foi confirmado ou tem erro, não faz nada
+      if (confirmationStatus !== 'idle') return;
+      
+      // Caso: Redirecionamento do Supabase com redirect_to
+      if (confirmed === 'true') {
+        setConfirmationStatus('success');
+        setConfirmationMessage('E-mail confirmado com sucesso! ✅');
+        
+        // Limpar o parâmetro da URL após 3 segundos
+        setTimeout(() => {
+          window.history.replaceState({}, '', window.location.pathname);
+        }, 3000);
+        return;
+      }
+    };
+    
+    confirmEmail();
+  }, [searchParams, confirmationStatus]);
 
   // Pré-carregar imagens
   useEffect(() => {
@@ -102,6 +134,18 @@ const Landing = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [goToPrevImage, goToNextImage]);
 
+  // Verificar se há erro e mostrar mensagem
+  if (!loadedImages.length && backgroundImages.length > 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8B1DA2] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header importado */}
@@ -109,6 +153,28 @@ const Landing = () => {
 
       {/* Hero Section - Overlay mais escuro */}
       <section className="relative h-[70vh] md:h-[80vh] overflow-hidden">
+        {/* Toast de confirmação - Posicionado no topo */}
+        {confirmationStatus !== 'idle' && (
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-top duration-300">
+            <div className={`flex items-center gap-3 px-6 py-4 rounded-lg shadow-lg ${
+              confirmationStatus === 'success' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}>
+              <span className="font-medium">{confirmationMessage}</span>
+              <button
+                onClick={() => {
+                  setConfirmationStatus('idle');
+                  setConfirmationMessage('');
+                }}
+                className="ml-4 text-white hover:text-white/80"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Contêiner do slideshow */}
         <div className="absolute inset-0">
           {/* Imagens pré-carregadas */}
