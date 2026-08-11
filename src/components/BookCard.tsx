@@ -181,25 +181,27 @@ const BookCard = ({
     });
   };
 
-  return (
-    <Link to={`/livro/${book.id}`} className="block">
-      <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 h-full border border-gray-200 hover:border-primary/30">
-        <div className="aspect-[3/4] relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-          {book.cover_url ? (
-            <img
-              src={book.cover_url}
-              alt={book.title}
+    return (
+        <Link to= {`/livro/${book.id}`
+} className = "block" >
+    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 h-full border border-gray-200 hover:border-primary/30" >
+        <div className="aspect-[3/4] relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100" >
+            {
+                book.cover_url ? (
+                    <img
+              src= { book.cover_url }
+              alt={ book.title }
               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
-            />
+                />
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 p-4">
-              <BookOpen className="h-16 w-16 text-primary/40 mb-2" />
-              <span className="text-xs text-primary/60 text-center font-medium line-clamp-2">
-                {book.title}
-              </span>
-            </div>
-          )}
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 p-4" >
+                <BookOpen className="h-16 w-16 text-primary/40 mb-2" />
+                <span className="text-xs text-primary/60 text-center font-medium line-clamp-2" >
+                { book.title }
+                </span>
+                </div>
+                )}
           
           {/* Badge de status */}
           <Badge className={`absolute top-3 left-3 border ${status.className} font-medium text-xs`}>
@@ -207,7 +209,7 @@ const BookCard = ({
             {status.label}
           </Badge>
           
-          {/* Botão de favorito */}
+{/* Botão de favorito - DESATIVAR
           {showFavoriteButton && (
             <Button
               variant="ghost"
@@ -225,12 +227,12 @@ const BookCard = ({
                 </div>
               )}
             </Button>
-          )}
+          )} */}
           
           {/* Badge de cópias disponíveis */}
           {book.available_copies > 0 && book.status === "available" && (
             <div className="absolute bottom-3 left-3">
-              <Badge variant="outline" className="bg-white/90 hover:bg-white border-gray-300">
+        <Badge variant="ghost" className="bg-white/90 hover:bg-white border-gray-300">
                 <Bookmark className="h-3 w-3 mr-1" />
                 {book.available_copies} {book.available_copies === 1 ? 'cópia' : 'cópias'}
               </Badge>
@@ -277,7 +279,7 @@ const BookCard = ({
                 variant="ghost"
                 size="icon"
                 onClick={toggleFavorite}
-                disabled={isLoading || !user}
+                disabled={isLoading}
                 className="flex-shrink-0 relative"
               >
                 <Heart 
