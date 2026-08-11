@@ -17,8 +17,19 @@ const Register = () => {
   const { signUp } = useAuth();
   const navigate = useNavigate();
 
+    // Valida se o e-mail pertence ao domínio corporativo
+  const ValidaEmailCorporativo = (emailAddress: string): boolean => {
+        const formattedEmail = emailAddress.trim().toLowerCase();
+        return formattedEmail.endsWith("@nextfit.com.br");
+   };
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+      e.preventDefault()
+
+      if (!ValidaEmailCorporativo(email)) {
+          toast.error("Acesso restrito. Use seu e-mail @nextfit.com.br para se cadastrar.");
+          return;
+      }
 
     if (password !== confirmPassword) {
       toast.error("As senhas não coincidem.");
