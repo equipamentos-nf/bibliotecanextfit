@@ -10,12 +10,16 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     hmr: {
       overlay: false,
-    },
+      },
+
+      watch: {
+          ignored: ['**/.vs/**']
+      }
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-  },
+    },    
 }));

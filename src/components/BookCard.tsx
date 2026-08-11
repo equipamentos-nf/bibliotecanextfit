@@ -209,7 +209,7 @@ const BookCard = ({
             {status.label}
           </Badge>
           
-{/* Botão de favorito - DESATIVAR
+{/* Botão de favorito - DESATIVAR */ }
           {showFavoriteButton && (
             <Button
               variant="ghost"
@@ -227,7 +227,7 @@ const BookCard = ({
                 </div>
               )}
             </Button>
-          )} */}
+          )} 
           
           {/* Badge de cópias disponíveis */}
           {book.available_copies > 0 && book.status === "available" && (
@@ -262,39 +262,43 @@ const BookCard = ({
             </p>
           )}
           
-          {/* Botão de ação */}
-          <div className="flex gap-2 mt-auto">
-            <Button
+{/* Botão de ação */ }
+<div className="flex gap-2 mt-auto" >
+    <Button
               variant="outline"
-              size="sm"
-              className="flex-1 text-xs"
-              onClick={handleBorrowClick}
-              disabled={book.status !== "available" || !user}
-            >
-              {book.status === "available" ? "Solicitar Empréstimo" : "Indisponível"}
-            </Button>
-            
-            {showFavoriteButton && (
-              <Button
+size = "sm"
+className = "flex-1 text-xs"
+onClick = { handleBorrowClick }
+disabled = { book.status !== "available" }
+    >
+{ book.status === "available" ? "Solicitar Empréstimo" : "Indisponível" }
+    </Button>
+
+{
+    showFavoriteButton && (
+        <Button
                 variant="ghost"
-                size="icon"
-                onClick={toggleFavorite}
-                disabled={isLoading}
-                className="flex-shrink-0 relative"
-              >
-                <Heart 
-                  className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} 
+    size = "icon"
+    onClick = {(e) => toggleFavorite(e)
+}
+disabled = { isLoading }
+className = "flex-shrink-0 relative border border-gray-200"
+    >
+    <Heart 
+                  className={ `h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'}` } 
                 />
-                {isLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="h-2 w-2 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-                  </div>
-                )}
-              </Button>
+{
+    isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-md" >
+            <div className="h-3 w-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin" > </div>
+                </div>
+                )
+}
+</Button>
             )}
-          </div>
-        </CardContent>
-      </Card>
+</div>
+    </CardContent>
+    </Card>
     </Link>
   );
 };
