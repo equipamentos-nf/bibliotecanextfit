@@ -26,8 +26,8 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
 
-      if (!ValidaEmailCorporativo(email)) {
-          toast.error("Acesso restrito. Use seu e-mail @nextfit.com.br para se cadastrar.");
+    if (!ValidaEmailCorporativo(email)) {
+          toast.error("Acesso restrito. Use seu e-mail corporativo para se cadastrar.");
           return;
       }
 
