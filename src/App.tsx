@@ -14,38 +14,43 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBooks from "./pages/admin/AdminBooks";
 import AdminRequests from "./pages/admin/AdminRequests";
 import NotFound from "./pages/NotFound";
-import Favoritos from "./pages/Favoritos"; 
+import Favoritos from "./pages/Favoritos"
+import AdminUsers from "./pages/admin/AdminUsers";
+import AtualizarSenha from "./pages/AtualizarSenha";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client= { queryClient } >
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/entrar" element={<Login />} />
-            <Route path="/cadastrar" element={<Register />} />
-            <Route path="/catalogo" element={<Catalog />} />
-            <Route path="/livro/:id" element={<BookDetail />} />
-            
-            {/* Rota dos favoritos - CORRIGIDA */}
-            <Route path="/favoritos" element={<Favoritos />} />
-            
-            <Route path="/meus-emprestimos" element={<MyLoans />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/livros" element={<AdminBooks />} />
-            <Route path="/admin/solicitacoes" element={<AdminRequests />} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+    <TooltipProvider>
+    <Toaster />
+    < Sonner />
+    <BrowserRouter>
+    <Routes>
+    <Route path="/" element = {< Landing />} />
+        < Route path = "/entrar" element = {< Login />} />
+            < Route path = "/atualizarSenha" element = {< AtualizarSenha />} />
+                < Route path = "/cadastrar" element = {< Register />} />
+                    < Route path = "/catalogo" element = {< Catalog />} />
+                        < Route path = "/livro/:id" element = {< BookDetail />} />
+
+
+{/* Rota dos favoritos - CORRIGIDA */ }
+<Route path="/favoritos" element = {< Favoritos />} />
+
+    < Route path = "/meus-emprestimos" element = {< MyLoans />} />
+        < Route path = "/admin" element = {< AdminDashboard />} />
+            < Route path = "/admin/livros" element = {< AdminBooks />} />
+                < Route path = "/admin/solicitacoes" element = {< AdminRequests />} />
+                    < Route path = "/admin/usuarios" element = {< AdminUsers />} />
+
+                        < Route path = "*" element = {< NotFound />} />
+                            </Routes>
+                            </BrowserRouter>
+                            </TooltipProvider>
+                            </AuthProvider>
+                            </QueryClientProvider>
 );
 
 export default App;

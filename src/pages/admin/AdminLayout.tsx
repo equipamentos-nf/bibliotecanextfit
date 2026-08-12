@@ -2,7 +2,7 @@ import { ReactNode, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Loader2, BookOpen, ClipboardList, LayoutDashboard, LogOut } from "lucide-react";
+import { Loader2, BookOpen, ClipboardList, LayoutDashboard, LogOut, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AdminLayoutProps {
@@ -12,7 +12,8 @@ interface AdminLayoutProps {
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/livros", label: "Livros", icon: BookOpen },
-  { href: "/admin/solicitacoes", label: "Solicitações", icon: ClipboardList },
+    { href: "/admin/solicitacoes", label: "Solicitações", icon: ClipboardList },
+    { href: "/admin/usuarios", label: "Usuários", icon: Users },
 ];
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
