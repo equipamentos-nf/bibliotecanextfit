@@ -310,14 +310,14 @@ placeholder = "Digite o nome do usuário"
     </div>
 
     < div className = "space-y-2" >
-        <label className="text-sm font-medium block" > E - mail(Login) </label>
+        <label className="text-sm font-medium block" > E-mail(Login) </label>
             < Input
 value = { editingUser?.email || ""}
 disabled
 className = "bg-gray-100 text-gray-500 cursor-not-allowed"
     />
     <p className="text-xs text-muted-foreground" >
-        Por motivos de segurança, o E - mail de login não pode ser alterado por aqui.
+        Por motivos de segurança, o E-mail de login não pode ser alterado por aqui.
                 </p>
             </div>
 
