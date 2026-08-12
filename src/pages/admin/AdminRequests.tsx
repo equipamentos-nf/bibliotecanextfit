@@ -209,6 +209,27 @@ const AdminRequests = () => {
                 window.dispatchEvent(new CustomEvent('bookUpdated', {
                     detail: { bookId, availableCopies: newAvailableCopies }
                 }));
+
+                // CHAMADA SILENCIOSA PARA O GOOGLE CALENDAR
+                const currentRequest = requests.find(r => r.id === requestId);
+                if (currentRequest) {
+                    /* DESATIVADO TEMPORARIAMENTE PARA TESTES, POIS O GOOGLE CALENDAR ESTÁ BLOQUEANDO A CHAMADA 
+                    supabase.functions.invoke("create-calendar-event", {
+                        body: {
+                            bookTitle: currentRequest.book.title,
+                            dueDate: dueDate.toISOString(),
+                            userEmail: currentRequest.profile.email,
+                        },
+                    }).then(({ error }) => {
+                        if (error) {
+                            console.error("Erro ao agendar no Google Calendar:", error);
+                        } else {
+                            console.log("Evento criado na agenda silenciosamente!");
+                        }
+                    });
+                    */
+
+                }
             }
 
             fetchRequests();
@@ -291,7 +312,6 @@ const AdminRequests = () => {
         }
     };
 
-    // Função para salvar a prorrogação da data
     const handleSaveNewDueDate = async () => {
         if (!extendingRequest || !selectedNewDate) {
             toast.error("Selecione uma data válida.");
@@ -312,6 +332,24 @@ const AdminRequests = () => {
             if (error) throw error;
 
             toast.success("Data de devolução prorrogada com sucesso!");
+
+            // CHAMADA SILENCIOSA PARA O GOOGLE CALENDAR (Prorrogação) - DESATIVADA
+            /*
+            supabase.functions.invoke("create-calendar-event", {
+                body: {
+                    bookTitle: extendingRequest.book.title,
+                    dueDate: formattedIsoDate,
+                    userEmail: extendingRequest.profile.email,
+                },
+            }).then(({ error }) => {
+                if (error) {
+                    console.error("Erro ao reagendar no Google Calendar:", error);
+                } else {
+                    console.log("Evento prorrogado na agenda silenciosamente!");
+                }
+            });
+            */
+
             setExtendingRequest(null);
             setSelectedNewDate("");
             fetchRequests();
