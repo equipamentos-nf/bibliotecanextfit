@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "./AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Users, Clock, CheckCircle } from "lucide-react";
+import { BookOpen, Users, Clock, CheckCircle, AlertTriangle } from "lucide-react";
 
 interface Stats {
   totalBooks: number;
-  availableBooks: number;
+  overdueBooks: number;
   pendingRequests: number;
   activeLoans: number;
 }
@@ -14,7 +14,7 @@ interface Stats {
 const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats>({
     totalBooks: 0,
-    availableBooks: 0,
+    overdueBooks: 0,
     pendingRequests: 0,
     activeLoans: 0,
   });
@@ -27,16 +27,18 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     setIsLoading(true);
 
-    const [booksResult, availableResult, pendingResult, activeResult] = await Promise.all([
+      const today = new Date().toISOString();
+
+      const [booksResult, overdueBooksResult, pendingResult, activeResult] = await Promise.all([
       supabase.from("books").select("id", { count: "exact", head: true }),
-      supabase.from("books").select("id", { count: "exact", head: true }).eq("status", "available"),
+      supabase.from("loan_requests").select("id", { count: "exact", head: true }).eq("status", "approved").lt("due_date", today),
       supabase.from("loan_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
       supabase.from("loan_requests").select("id", { count: "exact", head: true }).eq("status", "approved"),
     ]);
 
     setStats({
       totalBooks: booksResult.count || 0,
-      availableBooks: availableResult.count || 0,
+        overdueBooks: overdueBooksResult.count || 0,
       pendingRequests: pendingResult.count || 0,
       activeLoans: activeResult.count || 0,
     });
@@ -50,14 +52,14 @@ const AdminDashboard = () => {
       value: stats.totalBooks,
       icon: BookOpen,
       color: "text-[#8b1da2]",
-      bgColor: "bg-[#8b1da2]/10",
+        bgColor: "bg-[#8b1da2]/10",
     },
     {
-      title: "Disponíveis",
-      value: stats.availableBooks,
-      icon: CheckCircle,
-      color: "text-emerald-600",
-      bgColor: "bg-emerald-100",
+      title: "Livros Vencidos",
+      value: stats.overdueBooks, 
+      icon: AlertTriangle, 
+      color: "text-red-600", 
+        bgColor: "bg-red-100",
     },
     {
       title: "Solicitações Pendentes",

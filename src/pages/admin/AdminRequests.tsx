@@ -391,7 +391,7 @@ const AdminRequests = () => {
                                     <SelectItem value="all" > Todos </SelectItem>
                                         < SelectItem value = "pending" > Pendentes </SelectItem>
                                             < SelectItem value = "approved" > Aprovados </SelectItem>
-                                                < SelectItem value = "overdue" >⚠️ Vencidos </SelectItem>
+                                                < SelectItem value = "overdue" >Vencidos </SelectItem>
                                                     < SelectItem value = "rejected" > Recusados </SelectItem>
                                                         < SelectItem value = "returned" > Devolvidos </SelectItem>
                                                             </SelectContent>

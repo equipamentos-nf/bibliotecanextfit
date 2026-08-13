@@ -45,10 +45,12 @@ const BookDetail = () => {
   const [isRequesting, setIsRequesting] = useState(false);
   const [hasExistingRequest, setHasExistingRequest] = useState(false);
 
+
+
   useEffect(() => {
     if (id) {
       fetchBook();
-      setupRealtimeSubscription(); // ← ADICIONE ESTA LINHA
+      setupRealtimeSubscription(); //
       
       if (user) {
         checkExistingRequest();
@@ -189,7 +191,12 @@ const BookDetail = () => {
 
   if (!book) return null;
 
-  const status = statusConfig[book.status];
+// Valida o status real do livro considerando as cópias disponíveis
+const actualStatusKey = (book.status === "available" && book.available_copies === 0)
+    ? "borrowed"
+    : book.status;
+
+const status = statusConfig[actualStatusKey];
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

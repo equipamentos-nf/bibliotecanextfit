@@ -57,7 +57,7 @@ const emptyBook = {
 
 const statusConfig = {
   available: { label: "Disponível", className: "bg-success text-success-foreground" },
-  borrowed: { label: "Emprestado", className: "bg-muted text-muted-foreground" },
+  borrowed: { label: "Indisponivel", className: "bg-muted text-muted-foreground" },
   pending_approval: { label: "Aguardando", className: "bg-warning text-warning-foreground" },
 };
 
@@ -68,6 +68,8 @@ const AdminBooks = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
   const [formData, setFormData] = useState(emptyBook);
+
+
 
   useEffect(() => {
     fetchBooks();
@@ -339,44 +341,55 @@ const AdminBooks = () => {
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
-                {books.map((book) => (
-                  <TableRow key={book.id}>
-                    <TableCell className="font-medium">{book.title}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {book.author}
+    <TableBody>
+{
+    books.map((book) => {
+        
+        const actualStatusKey = (book.status === "available" && book.available_copies <= 0)
+            ? "borrowed"
+            : book.status;
+
+        const status = statusConfig[actualStatusKey];
+
+        return (
+            <TableRow key= { book.id } >
+            <TableCell className="font-medium" > { book.title } </TableCell>
+                < TableCell className = "text-muted-foreground" >
+                { book.author }
                     </TableCell>
-                    <TableCell>{book.category || "-"}</TableCell>
-                    <TableCell>
-                      <Badge className={statusConfig[book.status].className}>
-                        {statusConfig[book.status].label}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {book.available_copies}/{book.total_copies}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleOpenDialog(book)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-destructive hover:text-destructive"
-                          onClick={() => handleDelete(book.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+                    < TableCell > { book.category || "-" } </TableCell>
+                    < TableCell >
+            <Badge className={ status.className }>
+            { status.label }
+                        </Badge>
+                        </TableCell>
+                        <TableCell>
+        { book.available_copies }/{book.total_copies}
+            </TableCell>
+            < TableCell className = "text-right" >
+                <div className="flex justify-end gap-2" >
+                    <Button
+                            size="sm"
+        variant = "ghost"
+        onClick = {() => handleOpenDialog(book)
+    }
+                          >
+        <Pencil className="h-4 w-4" />
+        </Button>
+    < Button
+                            size = "sm"
+                            variant = "ghost"
+                            className = "text-destructive hover:text-destructive"
+                            onClick = {() => handleDelete(book.id)}
+                          >
+    <Trash2 className="h-4 w-4" />
+        </Button>
+        </div>
+        </TableCell>
+        </TableRow>
+                  );
+                })}
+</TableBody>
             </Table>
           )}
         </div>

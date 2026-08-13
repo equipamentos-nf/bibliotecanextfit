@@ -51,6 +51,7 @@ const BookCard = ({
     onFavoriteChange,
     showFavoriteButton = true
 }: BookCardProps) => {
+
     const { user } = useAuth();
     const { toast } = useToast();
     const [isFavorite, setIsFavorite] = useState(false);
@@ -59,7 +60,12 @@ const BookCard = ({
     const [favoriteId, setFavoriteId] = useState<string | null>(null);
     const [hasExistingRequest, setHasExistingRequest] = useState(false);
 
-    const status = statusConfig[book.status];
+
+    const actualStatusKey = (book.status === "available" && book.available_copies === 0)
+        ? "borrowed"
+        : book.status;
+
+    const status = statusConfig[actualStatusKey];
 
     useEffect(() => {
         if (user) {
@@ -192,7 +198,7 @@ const BookCard = ({
             return;
         }
 
-        if (book.status !== "available" || book.available_copies <= 0) {
+        if (book.available_copies === 0) {
             toast({
                 title: "Livro indisponível",
                 description: "Este livro não está disponível para empréstimo no momento",
@@ -296,6 +302,8 @@ const BookCard = ({
 { status.label }
 </Badge>
 
+
+
 {/* Botão de favorito */ }
 {
     showFavoriteButton && (
@@ -322,7 +330,7 @@ const BookCard = ({
 
 {/* Badge de cópias disponíveis */ }
 {
-    book.available_copies > 0 && book.status === "available" && (
+    book.available_copies >= 0 && book.status === "available" && (
         <div className="absolute bottom-3 left-3" >
             <Badge variant="ghost" className = "bg-white/90 hover:bg-white border-gray-300 text-xs" >
                 <Bookmark className="h-3 w-3 mr-1" />
